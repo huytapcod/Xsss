@@ -1,23 +1,39 @@
-import axios from "axios";
+import api from './api/product';
 
-// Tạo instance axios cho các API liên quan đến sản phẩm
-const productApi = axios.create({
-  baseURL: "http://localhost:8080/identity/api/product", // Base URL cho sản phẩm
-  headers: {
-    "Content-Type": "application/json",
+// Product Management APIs
+export const productApi = {
+  // Get all products
+  getAllProducts: (params) => {
+    return api.get({ params });
   },
-});
 
-// Thêm interceptor để gắn token vào header nếu cần
-productApi.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+  // Get product by ID
+  getProductById: (productId) => {
+    return api.get(`/${productId}`);
   },
-  (error) => Promise.reject(error)
-);
 
-export default productApi;
+  // Create new product
+  createProduct: (productData) => {
+    return api.post('/create', productData);
+  },
+
+  // Update product
+  updateProduct: (productId, productData) => {
+    return api.put(`/${productId}`, productData);
+  },
+
+  // Delete product
+  deleteProduct: (productId) => {
+    return api.delete(`/${productId}`);
+  },
+
+  // Get products by category
+  getProductsByCategory: (categoryId) => {
+    return api.get(`/category/${categoryId}`);
+  },
+
+  // Search products
+  searchProducts: (query) => {
+    return api.get('/search', { params: { query } });
+  }
+};

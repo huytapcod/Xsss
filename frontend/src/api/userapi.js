@@ -1,21 +1,34 @@
 import api from "./api";
 
-export const getMyInfo = async () => {
-  const response = await api.get("/myInfor");
-  return response.data;
-};
+// User Management APIs
+export const userApi = {
+  // Create new user
+  createUser: (userData) => {
+    return api.post("/users", userData);
+  },
 
-export const updateUser = async (userId, userData) => {
-  const response = await api.put(`/${userId}`, userData);
-  return response.data;
-};
+  // Get all users
+  getAllUsers: () => {
+    return api.get("/users");
+  },
 
-export const createUser = async (userData) => {
-  const response = await api.post("/", userData);
-  return response.data;
-};
+  // Get user by ID
+  getUserById: (userId) => {
+    return api.get(`/users/${userId}`);
+  },
 
-export const getUsers = async () => {
-  const response = await api.get("/");
-  return response.data;
+  // Get current user info
+  getMyInfo: () => {
+    return api.get("/users/myInfor");
+  },
+
+  // Update user
+  updateUser: (userId, userData) => {
+    return api.put(`/users/${userId}`, userData);
+  },
+
+  // Delete multiple users
+  deleteMultipleUsers: (userIds) => {
+    return api.delete("/users/delete-multiple", { data: { userIds } });
+  }
 };

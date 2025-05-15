@@ -46,6 +46,13 @@ public class ProductController {
         res.setMessage("Sản phẩm đã được xóa thành công");
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+    
+    @PutMapping("/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long productId, @RequestBody ProductUpdate productUpdate) {
+        Product updatedProduct = productService.updateProduct(productId, productUpdate);
+        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+    }
+
 
     @GetMapping
     public ResponseEntity<Page<Product>> getAllProducts(

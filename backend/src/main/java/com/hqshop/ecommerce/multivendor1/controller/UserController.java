@@ -10,6 +10,8 @@ import com.hqshop.ecommerce.multivendor1.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +28,7 @@ public class UserController {
     private UserResponse userResponse;
 
     @PostMapping
-    ApiResponse<User> ceationUser(@RequestBody @Valid UserCreationRequest request){
-        // ApiResponse<User> apiReponse = new ApiResponse<>();
-        // apiReponse.setResult(userService.createUser(request));
-        // return apiReponse;
+    public ResponseEntity<ApiResponse<User>> createUser(@RequestBody @Valid UserCreationRequest request) {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             return ResponseEntity.badRequest().body(
                 ApiResponse.<User>builder()
@@ -38,7 +37,6 @@ public class UserController {
                     .build()
             );
         }
-
         try {
             User createdUser = userService.createUser(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -52,40 +50,49 @@ public class UserController {
             return ResponseEntity.badRequest().body(
                 ApiResponse.<User>builder()
                     .success(false)
-                    .message(e.getMessage()) // Ví dụ: "Email đã tồn tại"
+                    .message(e.getMessage())
                     .build()
             );
         }
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginRequest request) {
+        // Implement login logic, return JWT token or session info
+        
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout() {
+        // Implement logout logic
+    }
+
     @GetMapping
-    ApiResponse<List<UserResponse>> getUsers() {
-        var securityContext = SecurityContextHolder.getContext().getAuthentication();
-
-        log.info("Username: {}" , securityContext.getName());
-        securityContext.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
-
+    public ApiResponse<List<UserResponse>> getUsers() {
         return ApiResponse.<List<UserResponse>>builder()
                 .result(userService.getAllUsers())
                 .build();
     }
+
     @GetMapping("/{userId}")
-    ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
+    public ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.getUser(userId))
                 .build();
     }
 
     @GetMapping("/myInfor")
-    ApiResponse<UserResponse> getMyInfor(@PathVariable("userId") String userId) {
-        return ApiResponse.<UserResponse>builder()
-                .result(userService.getUser(userId))
-                .build();
+    public ApiResponse<UserResponse> getMyInfor() {
+        // Get user info from security context
     }
 
     @PutMapping("/{userId}")
-    UserResponse updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
+    public UserResponse updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
         return userService.updateUser(userId, request);
     }
-//    @DeleteMapping("{userId}")
-//    UserResponse deleteUser(@PathVariable String userId, @RequestBody U) {}
+
+    @DeleteMapping("/delete-multiple")
+    public ResponseEntity<ApiResponse<Void>> deleteMultipleUsers(@RequestBody List<String> userIds) {
+        // Implement delete logic
+    }
 }
